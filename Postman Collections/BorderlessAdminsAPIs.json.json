@@ -1,0 +1,2065 @@
+{
+	"info": {
+		"_postman_id": "8e9e2926-958a-4b39-92b0-274d4807fcf0",
+		"name": "TEST - BHR 2.0 - Admins",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"  var jsonData = pm.response.json();\r",
+									"\r",
+									"var token = responseJson.data.token;\r",
+									"\r",
+									"pm.environment.set(\"admin_access_token\", token)\r",
+									"\r",
+									"pm.test(\"Access Token Generated\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.token).to.not.be.null;\r",
+									"    pm.expect(pm.response.text()).to.include(\"token\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set('adminname',jsonData.data.name)\r",
+									"pm.environment.set('adminemail',jsonData.data.email)\r",
+									"\r",
+									"\r",
+									"pm.test(\"Login\", function () {\r",
+									"    pm.expect(jsonData.data.name).to.eql(pm.environment.get(\"adminname\"));\r",
+									"    pm.expect(jsonData.data.email).to.eql(pm.environment.get(\"adminemail\"));\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"id": "f480b7ef-f8f4-4e71-a257-455aeab358fb"
+							}
+						}
+					],
+					"_postman_id": "6f80d340-adb3-45c7-9a44-8c422bc17bf7",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"erogahn@hotmail.com\",\r\n    \"password\" : \"erogahn@hotmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/auth"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "70042658-772f-4a1b-8e18-ba7297213921"
+							}
+						}
+					],
+					"_postman_id": "b3c95852-97e9-4a40-957e-eca4757b5887",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" : \"erogahn@hotmail.com\"\n}",
+							"options": {}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/auth"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "92eb052c-5106-4966-888e-6c6ddb1f67f2"
+		},
+		{
+			"name": "Businesses",
+			"item": [
+				{
+					"name": "List/Filter Businesses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set('busid',jsonData.data[0].id)\r",
+									"pm.environment.set('buscompany',jsonData.data[0].company)\r",
+									"pm.environment.set('busrole',jsonData.data[0].role)\r",
+									"pm.environment.set('busindustry',jsonData.data[0].industry)\r",
+									"\r",
+									"pm.test(\"Company Data\", function () {\r",
+									"    pm.expect(jsonData.data[0].id).to.eql(pm.environment.get(\"busid\"));\r",
+									"    pm.expect(jsonData.data[0].company).to.eql(pm.environment.get(\"buscompany\"));\r",
+									"    pm.expect(jsonData.data[0].role).to.include(pm.environment.get(\"busrole\"));\r",
+									"    pm.expect(jsonData.data[0].industry).to.eql(pm.environment.get(\"busindustry\"));\r",
+									"});\r",
+									"\r",
+									"pm.environment.set('buslinksf',jsonData.links.first)\r",
+									"pm.environment.set('buslinksl',jsonData.links.last)\r",
+									"\r",
+									"pm.test(\"Company Links\", function () {\r",
+									"    pm.expect(jsonData.links.first).to.eql(pm.environment.get(\"buslinksf\"));\r",
+									"    pm.expect(jsonData.links.last).to.eql(pm.environment.get(\"buslinksl\"));\r",
+									"});\r",
+									"\r",
+									"pm.environment.set('busmetacurrent',jsonData.meta.current_page)\r",
+									"pm.environment.set('busmetafrom',jsonData.meta.from)\r",
+									"pm.environment.set('busmetalast',jsonData.meta.last_page)\r",
+									"\r",
+									"\r",
+									"pm.test(\"Meta data\", function () {\r",
+									"    pm.expect(jsonData.meta.current_page).to.eql(pm.environment.get(\"busmetacurrent\"));\r",
+									"    pm.expect(jsonData.meta.from).to.eql(pm.environment.get(\"busmetafrom\"));\r",
+									"    pm.expect(jsonData.meta.last_page).to.eql(pm.environment.get(\"busmetalast\"));\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('busmetaurl',jsonData.meta.links[0,1,2].url)\r",
+									"pm.environment.set('busmetalabel',jsonData.meta.links[0,1,2].label)\r",
+									"pm.environment.set('busmetaactive',jsonData.meta.links[0,1,2].active)\r",
+									"\r",
+									"\r",
+									"pm.test(\"Meta Links data [0,1,2]\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.meta.links[0,1,2].url).to.eql(pm.environment.get(\"busmetaurl\"));\r",
+									"    pm.expect(jsonData.meta.links[0,1,2].label).to.eql(pm.environment.get(\"busmetalabel\"));\r",
+									"    pm.expect(jsonData.meta.links[0,1,2].active).to.eql(pm.environment.get(\"busmetaactive\"));\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('busmetapath',jsonData.meta.path)\r",
+									"pm.environment.set('busmetaperpage',jsonData.meta.per_page)\r",
+									"pm.environment.set('busmetato',jsonData.meta.to)\r",
+									"pm.environment.set('busmetatotal',jsonData.meta.total)\r",
+									"\r",
+									"pm.test(\"Meta path\", function () {\r",
+									"    pm.expect(jsonData.meta.path).to.eql(pm.environment.get(\"busmetapath\"));\r",
+									"    pm.expect(jsonData.meta.per_page).to.eql(pm.environment.get(\"busmetaperpage\"));\r",
+									"    pm.expect(jsonData.meta.to).to.eql(pm.environment.get(\"busmetato\"));\r",
+									"    pm.expect(jsonData.meta.total).to.eql(pm.environment.get(\"busmetatotal\"));\r",
+									"});"
+								],
+								"id": "de42987d-8a3a-4262-a499-dbf1823089d8"
+							}
+						}
+					],
+					"_postman_id": "6acbf181-ff05-466e-b9cc-ea498cbc317a",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/businesses?keyword=Developer&country=NG&industry=3",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"businesses"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Developer",
+									"description": "Searches by job name, company name, job ID (ref)"
+								},
+								{
+									"key": "country",
+									"value": "NG",
+									"description": "Searches by coutnry name, country ID (two letter code)"
+								},
+								{
+									"key": "industry",
+									"value": "3",
+									"description": "Searches by industry_id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Business",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set('fbusid',jsonData.data.id)\r",
+									"pm.environment.set('fbusenabled',jsonData.data.enabled)\r",
+									"pm.environment.set('fbusname',jsonData.data.name)\r",
+									"pm.environment.set('fbuslogo',jsonData.data.logo)\r",
+									"pm.environment.set('fbussize',jsonData.data.size)\r",
+									"pm.environment.set('fbuscountry',jsonData.data.country)\r",
+									"pm.environment.set('fbusstate',jsonData.data.state)\r",
+									"pm.environment.set('fbusindustry',jsonData.data.industry)\r",
+									"\r",
+									"\r",
+									"pm.test(\"Fetch Business\", function () {\r",
+									"    pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"fbusid\"));\r",
+									"    pm.expect(jsonData.data.enabled).to.eql(pm.environment.get(\"fbusenabled\"));\r",
+									"    pm.expect(jsonData.data.name).to.eql(pm.environment.get(\"fbusname\"));\r",
+									"    pm.expect(jsonData.data.logo).to.eql(pm.environment.get(\"fbuslogo\"));\r",
+									"    pm.expect(jsonData.data.size).to.eql(pm.environment.get(\"fbussize\"));\r",
+									"    pm.expect(jsonData.data.country).to.eql(pm.environment.get(\"fbuscountry\"));\r",
+									"    pm.expect(jsonData.data.state).to.eql(pm.environment.get(\"fbusstate\"));\r",
+									"    pm.expect(jsonData.data.industry).to.eql(pm.environment.get(\"fbusindustry\"));\r",
+									"});"
+								],
+								"id": "cd519bfe-f391-4c3c-8de9-2832e55fdeb0"
+							}
+						}
+					],
+					"_postman_id": "00b43be4-616f-4e27-87be-a6d5d398c518",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/businesses/:business_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"businesses",
+								":business_id"
+							],
+							"variable": [
+								{
+									"id": "208a9550-282f-4d7a-bd6c-9a4c5891b40b",
+									"key": "business_id",
+									"value": "{{busclientid}}",
+									"description": "Primary key of business of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Jobs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "43870045-ec6b-44cb-889c-17312bfa5b97"
+							}
+						}
+					],
+					"_postman_id": "4f6d4312-2967-4076-9aa0-9341615f45bd",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{borderless_service_url}}/api/v1/businesses/jobs"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set('busclientid',jsonData.data.business.id)\r",
+									"pm.environment.set('busclientname',jsonData.data.business.name)\r",
+									"pm.environment.set('busclientuserid',jsonData.data.user.id)\r",
+									"pm.environment.set('busclientname',jsonData.data.user.name)\r",
+									"pm.environment.set('busclientemail',jsonData.data.user.email)\r",
+									"pm.environment.set('busclientrole',jsonData.data.user.role)\r",
+									"\r",
+									"pm.test(\"Added Client\", function () {\r",
+									"    pm.expect(jsonData.data.business.id).to.eql(pm.environment.get(\"busclientid\"));\r",
+									"    pm.expect(jsonData.data.business.name).to.eql(pm.environment.get(\"busclientname\"));\r",
+									"    pm.expect(jsonData.data.user.id).to.eql(pm.environment.get(\"busclientuserid\"));\r",
+									"    pm.expect(jsonData.data.user.name).to.eql(pm.environment.get(\"busclientname\"));\r",
+									"    pm.expect(jsonData.data.user.email).to.eql(pm.environment.get(\"busclientemail\"));\r",
+									"    pm.expect(jsonData.data.user.role).to.eql(pm.environment.get(\"busclientrole\"));\r",
+									"});"
+								],
+								"id": "b96da5aa-b630-4a8c-93e2-8fc68e1092be"
+							}
+						}
+					],
+					"_postman_id": "f145371e-e242-4b31-bb90-1ca14de10419",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"company_name\": \"Borderless HR\",\r\n    \"company_website\": \"https://borderless.com\",\r\n    \"company_country_id\": \"NG\",\r\n    \"company_address\": \"Lagos, Nigeria\",\r\n    \"company_industry_id\": 6,\r\n    \"company_size_id\": 1,\r\n    \"company_state_id\" : 250,\r\n    \"first_name\": \"Borderless\",\r\n    \"last_name\": \"HR\",\r\n    \"email\": \"yazmin.conn1@hotmail.com\",\r\n    \"phone\": \"0123456789\",\r\n    \"password\": \"borderless@borderless.com\",\r\n    \"password_confirmation\": \"borderless@borderless.com\",\r\n    \"role_id\": \"11\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/businesses"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "7fa30f32-3137-461a-9543-4c219e36a58a",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "f3d02396-e6b5-47a7-8f41-8417c27d8891",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "df7ab882-c3f1-45a2-8d72-3456f215f013",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Password Reset",
+			"item": [
+				{
+					"name": "Request Password Reset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "568d8209-c134-4361-898c-9937b4b99807"
+							}
+						}
+					],
+					"_postman_id": "6368e43c-c6eb-4963-8fb6-064204bb6c56",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"erogahn@hotmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/reset-password-request"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "0640e7d2-9a0c-4e82-8ea7-dd992aa40b00"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var token = pm.environment.get(\"admin_access_token\");"
+								],
+								"id": "740b1e4e-8fc6-4bb6-b0ed-2965b786e616"
+							}
+						}
+					],
+					"_postman_id": "10519fca-6c6d-4644-ae0e-7248ab49de29",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\":\"{{admin_access_token}}\",\n    \"email\":\"erogahn@hotmail.com\",\n    \"password\":\"erogahn@hotmail.com\",\n    \"password_confirmation\":\"erogahn@hotmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/reset-password"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "6f623015-0f70-42fa-abd8-b1eb925547b8"
+		},
+		{
+			"name": "Culture Fit",
+			"item": [
+				{
+					"name": "Categories",
+					"item": [
+						{
+							"name": "Add Categories",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"id": "ccfd1428-d456-4e41-a907-920ee65699a2"
+									}
+								}
+							],
+							"_postman_id": "ccf3cf9b-46eb-4877-b3c1-46f15e838807",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items\" : [\n        {\n            \"name\" : \"Category 1\"\n        }, {\n            \"name\" : \"Category 2\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{borderless_service_url}}/api/v1/admins/culture-fit/categories"
+							},
+							"response": []
+						},
+						{
+							"name": "List Categories",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"id": "daa42c39-1072-4fd1-bea1-2bdddca33f40"
+									}
+								}
+							],
+							"_postman_id": "7912d177-7378-4c23-9a4d-7eaff68ec3fb",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{borderless_service_url}}/api/v1/admins/culture-fit/categories"
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Category",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"id": "ac90f45f-5b18-468a-9a19-9849daff0b98"
+									}
+								}
+							],
+							"_postman_id": "628927f0-da14-494f-b365-012e52766871",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{borderless_service_url}}/api/v1/admins/culture-fit/categories/:category_id",
+									"host": [
+										"{{borderless_service_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admins",
+										"culture-fit",
+										"categories",
+										":category_id"
+									],
+									"variable": [
+										{
+											"id": "53ec9ce9-e43b-4e9d-9534-5524e4610ef5",
+											"key": "category_id",
+											"value": "1",
+											"description": "Primary key of category of interest",
+											"type": "string"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Culture Fit Item",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"id": "d86d86d1-4bc6-44d2-b373-e01171a9d03f"
+									}
+								}
+							],
+							"_postman_id": "80800de6-6e95-44e6-9955-7c38b48550fc",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\" : \"Values\",\n    \"culture_fit_category_id\" : 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{borderless_service_url}}/api/v1/admins/culture-fit/:culture_fit_id",
+									"host": [
+										"{{borderless_service_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admins",
+										"culture-fit",
+										":culture_fit_id"
+									],
+									"variable": [
+										{
+											"id": "af29d2c7-276a-4899-8579-24249fb80ca6",
+											"key": "culture_fit_id",
+											"value": "10",
+											"description": "Primary key of culture fit item of interest",
+											"type": "string"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Culture Fit Items",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"id": "1d3f294b-71ec-46a7-a528-2913ac2604ac"
+									}
+								}
+							],
+							"_postman_id": "9550bf66-cc4c-4b25-ac95-657a37369ebb",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items\" : [\n        {\n            \"id\" : 1,\n            \"name\" : \"Values\",\n            \"culture_fit_category_id\" : 1\n        }, {\n            \"id\" : 2,\n            \"name\" : \"Values\",\n            \"culture_fit_category_id\" : 1\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{borderless_service_url}}/api/v1/admins/culture-fit"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Categories",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"id": "9aa329c4-8032-403a-a64b-d0838c26d7c4"
+									}
+								}
+							],
+							"_postman_id": "8c128ca0-1594-4a32-b282-63657c867dd7",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items\" : [ 1, 2, 3 ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{borderless_service_url}}/api/v1/admins/culture-fit"
+							},
+							"response": []
+						}
+					],
+					"_postman_id": "da5b527b-d7ee-44d6-a094-611c5ef6f192",
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Add Culture Fit Items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "adacf9b9-576c-4b9e-b405-c81ab8b6984a"
+							}
+						}
+					],
+					"_postman_id": "abe82001-4196-47c9-a4fe-2694f78adec0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\" : [\n        {\n            \"name\": \"Honesty\",\n            \"culture_fit_category_id\" : 1\n        }, {\n            \"name\": \"Openness\",\n            \"culture_fit_category_id\" : 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/culture-fit",
+						"description": "This endpoint accepts an array of culture fit items and their categories for bulk inserting"
+					},
+					"response": []
+				},
+				{
+					"name": "List Culture Fit Items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "ccaf641d-ae51-416a-a7c0-48ac40b831cc"
+							}
+						}
+					],
+					"_postman_id": "288bf5cc-d624-4876-9f62-13ede142eb91",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{borderless_service_url}}/api/v1/admins/culture-fit"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Culture Fit Items",
+					"_postman_id": "865eb7e6-ca70-412c-ac7a-b9a72e3b0c59",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\" : [\n        {\n            \"id\" : 1,\n            \"name\" : \"Values\",\n            \"culture_fit_category_id\" : 1\n        }, {\n            \"id\" : 2,\n            \"name\" : \"Values\",\n            \"culture_fit_category_id\" : 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/culture-fit"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Culture Fit Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "8a11a2d9-b887-46b4-91f7-df94fa589bcf"
+							}
+						}
+					],
+					"_postman_id": "c6a3263f-d757-4285-bd70-bf37195765b9",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\" : [\n        {\n            \"id\" : 1,\n            \"name\" : \"Values\",\n            \"culture_fit_category_id\" : 1\n        }, {\n            \"id\" : 2,\n            \"name\" : \"Values\",\n            \"culture_fit_category_id\" : 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/culture-fit/:culture_fit_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"culture-fit",
+								":culture_fit_id"
+							],
+							"variable": [
+								{
+									"id": "7279ac92-9be0-44a6-b45b-16290b40cb22",
+									"key": "culture_fit_id",
+									"value": "10",
+									"description": "Primary key of culture fit item of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Culture Fit Items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "ffc4f1a0-b5a3-43f1-9e1d-7ce9d41bf060"
+							}
+						}
+					],
+					"_postman_id": "b7c78a4c-1d02-4b94-836c-f65f6d5bd69d",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\" : [ 1, 2, 3 ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/culture-fit"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "da46af71-8e39-4992-abb8-de8241dde969"
+		},
+		{
+			"name": "Talents",
+			"item": [
+				{
+					"name": "List/Filter Talents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "283051af-6cfa-4751-8e13-4e46ac406a7e"
+							}
+						}
+					],
+					"_postman_id": "6b293841-c228-4654-b3f9-f46854324cc1",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/talents?country=NG&skill=1&experience=2&role=",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"talents"
+							],
+							"query": [
+								{
+									"key": "country",
+									"value": "NG",
+									"description": "Two letter code of country of interest"
+								},
+								{
+									"key": "skill",
+									"value": "1",
+									"description": "Primary key of skill of interest"
+								},
+								{
+									"key": "experience",
+									"value": "2",
+									"description": "Primary key of experience of interest"
+								},
+								{
+									"key": "role",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "3c701d70-2219-455e-8597-47bc469d9d02"
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "Dashboard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set('ongoingV',jsonData.data.number_of_ongoing_vacancies)\r",
+									"pm.environment.set('numberV',jsonData.data.number_of_vacancies)\r",
+									"pm.environment.set('offeredV',jsonData.data.number_of_offered_vacancies)\r",
+									"pm.environment.set('talentsV',jsonData.data.number_of_talents)\r",
+									"\r",
+									"pm.test(\"Dashboard Data\", function () {\r",
+									"    pm.expect(jsonData.data.number_of_ongoing_vacancies).to.eql(pm.environment.get(\"ongoingV\"));\r",
+									"    pm.expect(jsonData.data.number_of_vacancies).to.eql(pm.environment.get(\"numberV\"));\r",
+									"    pm.expect(jsonData.data.number_of_offered_vacancies).to.eql(pm.environment.get(\"offeredV\"));\r",
+									"    pm.expect(jsonData.data.number_of_talents).to.eql(pm.environment.get(\"talentsV\"));\r",
+									"});"
+								],
+								"id": "09b97feb-e4c0-496e-9ff2-20ec2c665c3b"
+							}
+						}
+					],
+					"_postman_id": "20542515-5faa-4c2e-bfe3-5f1da4ec498b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {}
+						},
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/dashboard?month=4&year=2022",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"dashboard"
+							],
+							"query": [
+								{
+									"key": "month",
+									"value": "4",
+									"description": "month filter"
+								},
+								{
+									"key": "year",
+									"value": "2022",
+									"description": "year filter"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "8bd52443-69e4-40a5-ba55-ffbac903db93"
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "List Roles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data[0,1,2,3,4,5,6].id)\r",
+									"pm.environment.set('SAname',jsonData.data[0,1,2,3,4,5,6].name)\r",
+									"\r",
+									"pm.test(\"New Roles\", function () {\r",
+									"    pm.expect(jsonData.data[0,1,2,3,4,5,6].id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data[0,1,2,3,4,5,6].name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "329f7219-24ee-417d-9d44-8ce35c34629e"
+							}
+						}
+					],
+					"_postman_id": "3edcd9d4-e3ce-42be-a66f-a9288d481142",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{borderless_service_url}}/api/v1/admins/roles"
+					},
+					"response": []
+				},
+				{
+					"name": "Role Details (Super Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data.id)\r",
+									"pm.environment.set('SAname',jsonData.data.name)\r",
+									"\r",
+									"pm.test(\"Super Admin\", function () {\r",
+									"    pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data.name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "b321716f-b494-44e4-8317-cc9daa3f6d8f"
+							}
+						}
+					],
+					"_postman_id": "1480244c-19fc-4afe-ae63-2a956b297fc5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "401ef65f-39d5-485b-bae9-15ad6e956b2d",
+									"key": "role_id",
+									"value": "1",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Role Details (Internal Recruiter)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data.id)\r",
+									"pm.environment.set('SAname',jsonData.data.name)\r",
+									"\r",
+									"pm.test(\"Super Admin\", function () {\r",
+									"    pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data.name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "3b6e17df-f090-4886-a545-fb5d4e2175f8"
+							}
+						}
+					],
+					"_postman_id": "9f97bf55-7d38-4903-9b99-2744e8f5571b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "326c3128-7f61-4415-a531-fd5fc003d985",
+									"key": "role_id",
+									"value": "2",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Role Details (External Recruiter)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data.id)\r",
+									"pm.environment.set('SAname',jsonData.data.name)\r",
+									"\r",
+									"pm.test(\"Super Admin\", function () {\r",
+									"    pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data.name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "e93e7363-7ba6-4b4e-96d2-aab74883754f"
+							}
+						}
+					],
+					"_postman_id": "37bf99fd-16c9-494d-aa97-17c3dfda4007",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "804e26dd-f8f2-473c-a1ad-08dad1537ca5",
+									"key": "role_id",
+									"value": "3",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Role Details (Supervisor)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data.id)\r",
+									"pm.environment.set('SAname',jsonData.data.name)\r",
+									"\r",
+									"pm.test(\"Super Admin\", function () {\r",
+									"    pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data.name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "654d37ed-0cf6-40a5-8af2-e342ec2fa03e"
+							}
+						}
+					],
+					"_postman_id": "c0d41776-abe2-4b7a-8b85-4aeeff3d0547",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "4790fbfc-75bd-4e57-bfb5-cfc312f9682d",
+									"key": "role_id",
+									"value": "4",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Role Details (Account Manager)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data.id)\r",
+									"pm.environment.set('SAname',jsonData.data.name)\r",
+									"\r",
+									"pm.test(\"Super Admin\", function () {\r",
+									"    pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data.name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "b063f0f2-6260-4113-8420-5c10da7c76a4"
+							}
+						}
+					],
+					"_postman_id": "e3b8cd70-af00-480a-ac8f-16a652a75ce6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "522a53fb-c4fc-45d0-a1b5-5748ba8e7fa3",
+									"key": "role_id",
+									"value": "5",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Role Details (Talent Support)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data.id)\r",
+									"pm.environment.set('SAname',jsonData.data.name)\r",
+									"\r",
+									"pm.test(\"Super Admin\", function () {\r",
+									"    pm.expect(jsonData.data.id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data.name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "ce8b346c-dfc3-4413-a391-1c20b95aea0d"
+							}
+						}
+					],
+					"_postman_id": "32ea85c3-a910-4ef0-8def-4b72532b5ab3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "3479364a-0b45-452b-91ed-c4b379c73d44",
+									"key": "role_id",
+									"value": "6",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Role Details (No Role)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"id": "1dc0fd97-147a-477f-9edf-63c2cc4adbd6"
+							}
+						}
+					],
+					"_postman_id": "234ccb1c-bbb8-4744-8b5f-646b2b5ddec6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "1b4e5959-9371-4446-ba11-ea13ed8e4869",
+									"key": "role_id",
+									"value": "7",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Role (Success)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									" var value = pm.environment.get(\"var\");\r",
+									"\r",
+									"pm.environment.set(\"var\", value+1);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data[0,1,2,3,4,5,6].id)\r",
+									"pm.environment.set('SAname',jsonData.data[0,1,2,3,4,5,6].name)\r",
+									"\r",
+									"pm.test(\"New Roles\", function () {\r",
+									"    pm.expect(jsonData.data[0,1,2,3,4,5,6].id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data[0,1,2,3,4,5,6].name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "b88fb676-082a-40f3-8504-dd7faa8ab475"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var value = pm.environment.get(\"var\");\r",
+									"\r",
+									"if( !value) {\r",
+									"    pm.environment.set(\"var\", 1);\r",
+									"}"
+								],
+								"id": "ca469944-d361-42a1-9c57-4f4403b785fa"
+							}
+						}
+					],
+					"_postman_id": "c904f88f-e1f5-4778-a653-bf8f1223687f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"Test Role{{value}}\",\n    \"permissions\" : [ 1, 2, 3, 4 ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/roles"
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Role (empty name)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});"
+								],
+								"id": "b122bf1e-c58c-485c-9623-ecc7d25fcc5d"
+							}
+						}
+					],
+					"_postman_id": "0b6bbc44-c97d-409c-b6a9-22a44d10c97e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"\",\n    \"permissions\" : [ 1, 2, 3, 4 ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/roles"
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Role (empty name field)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});"
+								],
+								"id": "9bf8e5b8-b870-4da3-a7a0-f7962ceaeef9"
+							}
+						}
+					],
+					"_postman_id": "28dbc8de-eda5-4f7c-bfae-d239076193db",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"Test Role\",\n    \"permissions\" : [ 1, 2, 3, 4 ,  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/roles"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data[0,1,2,3,4,5,6].id)\r",
+									"pm.environment.set('SAname',jsonData.data[0,1,2,3,4,5,6].name)\r",
+									"\r",
+									"pm.test(\"New Roles\", function () {\r",
+									"    pm.expect(jsonData.data[0,1,2,3,4,5,6].id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data[0,1,2,3,4,5,6].name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "cbdcb891-835f-4494-8eee-a2e88c24bf4f"
+							}
+						}
+					],
+					"_postman_id": "3fa5988f-39f5-49f2-9e48-0702c246772a",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"Test Role 4\",\n    \"permissions\" : [ 1, 2, 3, 4 ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "3cd63f2f-1814-4dde-88d5-20d9d9706ad2",
+									"key": "role_id",
+									"value": "{{SAid}}",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									" var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.environment.set('SAid',jsonData.data[0,1,2,3,4,5,6].id)\r",
+									"pm.environment.set('SAname',jsonData.data[0,1,2,3,4,5,6].name)\r",
+									"\r",
+									"pm.test(\"New Roles\", function () {\r",
+									"    pm.expect(jsonData.data[0,1,2,3,4,5,6].id).to.eql(pm.environment.get(\"SAid\"));\r",
+									"    pm.expect(jsonData.data[0,1,2,3,4,5,6].name).to.eql(pm.environment.get(\"SAname\"));\r",
+									"});"
+								],
+								"id": "b25c1b6f-b6e2-4650-9787-e8ad5e23852d"
+							}
+						}
+					],
+					"_postman_id": "956eddcf-cac3-44e5-aa4a-85abc1c5f4d5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/roles/:role_id",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"roles",
+								":role_id"
+							],
+							"variable": [
+								{
+									"id": "bbf8d3d5-e819-4ded-b83c-3ac9d1bc8cf4",
+									"key": "role_id",
+									"value": "{{SAid}}",
+									"description": "Primary key of role of interest",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "70d5c8f4-647d-45fc-8e65-de7a8d389182"
+		},
+		{
+			"name": "Recruiters",
+			"item": [
+				{
+					"name": "List Recruiters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "f569c5c9-efd6-4fee-9c02-94428020d5c8"
+							}
+						}
+					],
+					"_postman_id": "bc759962-b1ea-4a52-bc93-2479cda5dfa7",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{borderless_service_url}}/api/v1/admins/recruiters"
+					},
+					"response": []
+				},
+				{
+					"name": "My Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "bc255f22-2a80-4d7d-8a98-d150b1292dbe"
+							}
+						}
+					],
+					"_postman_id": "f03dc912-7397-4065-8fb6-aa3943505d08",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{borderless_service_url}}/api/v1/admins/tasks"
+					},
+					"response": []
+				},
+				{
+					"name": "all tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "1ba3e548-63c3-4ae0-8e0e-828ab59e3bef"
+							}
+						}
+					],
+					"_postman_id": "90beee1a-f900-4083-b92d-b5345f7125aa",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{borderless_service_url}}/api/v1/admins/tasks"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "545c632f-77f3-4d12-aa1a-2f56b4ea0a03"
+		},
+		{
+			"name": "Content",
+			"item": [
+				{
+					"name": "Retrieve Content",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "a77beb3f-cbd3-4146-a9d7-9ab44cb5d213"
+							}
+						}
+					],
+					"_postman_id": "cdf33851-e702-4e51-8647-eb563422ea80",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{borderless_service_url}}/api/v1/admins/contents/:slug",
+							"host": [
+								"{{borderless_service_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admins",
+								"contents",
+								":slug"
+							],
+							"variable": [
+								{
+									"id": "c7ba9038-1d41-4995-af5d-7855d8781233",
+									"key": "slug",
+									"value": "STRING",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Content",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content Status\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data).to.eql(\"Successfully Added Content\");\r",
+									"});"
+								],
+								"id": "a1fe9459-719d-4d89-bd1e-64b12ad0fae4"
+							}
+						}
+					],
+					"_postman_id": "66348f63-4986-4fe8-b411-6a730240a9d1",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"Privacy Privacy\",\n    \"content\":\"some content\",\n    \"description\": \"some descirption\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/contents"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Content",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"id": "fe72e726-6de6-4b88-8c6c-6f01da19d597"
+							}
+						}
+					],
+					"_postman_id": "645fb9d6-569c-44af-8ad8-b2546e2b677b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"another content\",\n    \"content\":\"some content\",\n    \"description\": \"some descirption\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borderless_service_url}}/api/v1/admins/contents/{slug}"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "074a7a01-42aa-495d-83ce-6ae0162d9381"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{admin_access_token}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "0b677489-6914-4c11-ae70-7012283d5f7d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "dd5a7547-38ed-4373-921a-f2c51eadb781",
+				"type": "text/javascript",
+				"exec": [
+					"const responseJson = pm.response.json();",
+					"",
+					"",
+					"pm.test(\"The get the success info\", function () {",
+					"    var jsonData = pm.response.json();",
+					"    pm.expect(jsonData.success).to.be.oneOf([true,false]);",
+					"});"
+				]
+			}
+		}
+	]
+}
